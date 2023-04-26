@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BeerCompApp</string>
+    <string name="main_screen">Главная</string>
+    <string name="beer_menu">Пиво</string>
+    <string name="snack_menu">Закуски</string>
+    <string name="shopping">Корзина</string>
+    <string name="elsee">Ещё</string>
+    <string name="go_to_authorization_screen">go to authorization screen</string>
+
+    <string name="try_again">Try again</string>
+
+</resources>
