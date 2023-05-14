@@ -1,14 +1,17 @@
 package com.example.beercompapp.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.beercompapp.presentation.item_detail.ItemDetailScreen
+import com.example.beercompapp.presentation.shopping_list.ShoppingListScreen
 import com.example.beercompapp.presentation.utils.BeerPage
 
 
@@ -18,20 +21,12 @@ fun BeerAppNavController(
 ) {
     val uiState = viewModel.state.collectAsState().value
 
-    val navController = rememberNavController()
-    BeerAppNavHost(
-        uiState = uiState,
-        viewModel = viewModel,
-        navController = navController,
-    )
-}
+    LaunchedEffect(Unit) {
+        viewModel.getProductsFromDb()
+        viewModel.getCartItems()
+    }
 
-@Composable
-fun BeerAppNavHost(
-    uiState: BeerAppUiState,
-    viewModel: MenuScreenViewModel,
-    navController: NavHostController,
-) {
+    val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
             BeerAppPager(
@@ -42,19 +37,25 @@ fun BeerAppNavHost(
                         MenuCategory.Snacks -> viewModel.updateCurrentPage(BeerPage.Menu, it)
                     }
                 },
-                onProductItemClick = { navController.navigate("beer_item_detail") },
-                onTabPressed = { beerPage: BeerPage ->
-                    viewModel.updateCurrentPage(beerPage = beerPage)
-                },
-                uiState = uiState,
-                )
+                onProductItemClick = { navController.navigate("beer_item_detail/${it.UID}") },
+                uiState = uiState
+            )
         }
         composable(
-            route = "beer_item_detail"
+            route = "beer_item_detail/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                }
+            )
 
-        ) {
-
+        ) { entry ->
+            ItemDetailScreen(
+                id = entry.arguments?.getString("id")!!,
+                uiState = uiState,
+                onBackPressed = { navController.navigateUp() },)
         }
 
     }
 }
+

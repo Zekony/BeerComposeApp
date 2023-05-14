@@ -1,6 +1,7 @@
 package com.example.beercompapp.data.network.dto
 
 import com.example.beercompapp.data.entities.ProductItem
+import com.example.beercompapp.presentation.MenuCategory
 
 data class BeerDto(
     val UID: String = "",
@@ -28,7 +29,7 @@ fun BeerDto.toProductItem(): ProductItem {
         name = name,
         price = price,
         type = type,
-        category = "Beer",
+        category = MenuCategory.Beer,
         volume = volume,
         salePercentage = salePercentage,
     )

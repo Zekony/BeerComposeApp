@@ -8,5 +8,19 @@
     <string name="go_to_authorization_screen">go to authorization screen</string>
 
     <string name="try_again">Try again</string>
+    <string name="categories">Категории</string>
 
+    <string name="beverages">Напитки</string>
+    <string name="add_to_cart">В корзину</string>
+
+    <string name="registration">Пожалуйста введите номер телефона, логин и пароль, чтобы создать аккаунт</string>
+    <string name="authorization">Пожалуйста введите логин и пароль, чтобы авторизироваться</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="enter_password_again">Повторите пароль</string>
+    <string name="enter_login">Введите логин</string>
+    <string name="enter_number">Введите номер телефона</string>
+
+    <string name="no_account">Нет аккаунта?</string>
+    <string name="to_registration_screen">Создайте бесплатный аккаунт</string>
+    <string name="to_auth_screen">Уже есть аккаунт?</string>
 </resources>

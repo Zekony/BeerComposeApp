@@ -1,15 +1,19 @@
 package com.example.beercompapp.data.repository
 
 import android.util.Log
+import com.example.beercompapp.data.db.ProductDao
+import com.example.beercompapp.data.entities.CartItem
+import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.data.network.ApiClient
 import com.example.beercompapp.data.network.dto.BeerDtoList
 import com.example.beercompapp.data.network.dto.SnackDtoList
-import com.example.beercompapp.domain.repository.BeerRepository
+import com.example.beercompapp.domain.repository.ProductAppRepository
 import javax.inject.Inject
 
-class BeerRepositoryImpl @Inject constructor(
-    private val api: ApiClient
-): BeerRepository {
+class ProductRepositoryImpl @Inject constructor(
+    private val api: ApiClient,
+    private val dao: ProductDao
+) : ProductAppRepository {
 
     override suspend fun getBeersApi(): BeerDtoList? {
         val request = api.getAllBeer()
@@ -54,4 +58,30 @@ class BeerRepositoryImpl @Inject constructor(
         }
         return null
     }
+
+    override fun getProducts() = dao.getProducts()
+
+    override fun getProductById(id: String) = dao.getProductById(id)
+    override suspend fun addProduct(item: ProductItem) {
+        dao.addProduct(item)
+    }
+    override suspend fun updateProduct(item: ProductItem) {
+        dao.updateProduct(item)
+    }
+
+    //Cart functions
+    override fun getCartItems() = dao.getCartItems()
+
+    override suspend fun addToCart(item: CartItem) {
+        dao.addToCart(item)
+    }
+    override suspend fun updateCartItem(item: CartItem) {
+        dao.updateCartItem(item)
+    }
+
+    override suspend fun deleteCartItem(item: CartItem) {
+        dao.deleteCartItem(item)
+    }
+
+
 }

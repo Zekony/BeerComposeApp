@@ -1,5 +1,6 @@
 package com.example.beercompapp.presentation
 
+import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.presentation.utils.BeerPage
 
@@ -9,7 +10,7 @@ data class BeerAppUiState(
     val downloadState: DownloadState = DownloadState.Loading,
     val listOfSnacks: List<ProductItem> = mutableListOf(),
     val listOfBeer: List<ProductItem> = mutableListOf(),
-    val error: String = ""
+    val shoppingCart: List<CartItem> = mutableListOf(),
 )
 
 sealed interface DownloadState {

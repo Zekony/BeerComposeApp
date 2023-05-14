@@ -34,7 +34,7 @@ val Typography = Typography(
     h1 = TextStyle(
         fontFamily = gothicA1,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
+        fontSize = 20.sp
     ),
     h2 = TextStyle(
         fontFamily = gothicA1,
@@ -44,11 +44,16 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = gothicA1,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 17.sp
     ),
     body2 = TextStyle(
         fontFamily = montserrat,
         fontWeight = FontWeight.Medium,
         fontSize = 15.sp
+    ),
+    button = TextStyle(
+        fontFamily = montserrat,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp
     ),
 )
