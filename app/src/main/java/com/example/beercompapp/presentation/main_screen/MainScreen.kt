@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.beercompapp.R
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 import com.example.beercompapp.presentation.ui.theme.BeerCompAppTheme
 
 
@@ -47,9 +47,13 @@ private fun BeerAppMainScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
-            .padding(6.dp, top = 60.dp, bottom = 70.dp)
+            .padding(10.dp, top = 70.dp, bottom = 70.dp)
     ) {
-        Text(text = stringResource(id = R.string.categories), style = MaterialTheme.typography.h1)
+        Text(
+            text = stringResource(id = R.string.categories),
+            style = MaterialTheme.typography.h1,
+            modifier = Modifier.padding(vertical = 10.dp)
+        )
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.padding(6.dp),

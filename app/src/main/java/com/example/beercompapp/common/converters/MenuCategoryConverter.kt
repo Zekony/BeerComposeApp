@@ -1,10 +1,9 @@
 package com.example.beercompapp.common.converters
 
 import androidx.room.TypeConverter
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 
 class MenuCategoryConverter {
-
     @TypeConverter
     fun toMenuCategory(category: String): MenuCategory {
         return if (category.contains("Beer")) {

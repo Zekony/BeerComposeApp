@@ -3,17 +3,9 @@ package com.example.beercompapp.data
 import com.example.beercompapp.R
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 
 object LocalDataProvider {
-    fun getAdsList(): List<Int> {
-        return listOf(
-            R.drawable.beer_ad_job,
-            R.drawable.beer_ad_safe,
-            R.drawable.beer_ad_prom,
-            R.drawable.beer_ad_serf
-        )
-    }
 
     fun getProductsTestList(): List<ProductItem> {
         return listOf(
@@ -27,7 +19,6 @@ object LocalDataProvider {
                 type = "",
                 category = MenuCategory.Beer,
                 volume = 7.0,
-                isFavorite = false,
                 salePercentage = 30,
                 weight = 10,
                 tags = emptyList()
@@ -42,7 +33,6 @@ object LocalDataProvider {
                 type = "",
                 category = MenuCategory.Beer,
                 volume = 7.0,
-                isFavorite = false,
                 salePercentage = 30,
                 weight = 10,
                 tags = emptyList()

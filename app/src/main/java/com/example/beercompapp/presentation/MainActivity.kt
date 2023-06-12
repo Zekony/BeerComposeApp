@@ -1,49 +1,30 @@
 package com.example.beercompapp.presentation
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.MenuProvider
-import com.example.beercompapp.R
+import com.example.beercompapp.presentation.core.BeerAppNavController
 import com.example.beercompapp.presentation.ui.theme.BeerCompAppTheme
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
-    private val menuProvider = object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.menu_authorization, menu)
-        }
-
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return when (menuItem.itemId) {
-                R.id.go_to_autorization_screen -> {
-                    // viewModel.updateData()
-                    true
-                }
-                else -> false
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCenter.start(
+            application, "4e587244-6678-4c2b-bd66-52bd769dd238",
+            Analytics::class.java, Crashes::class.java
+        )
         super.onCreate(savedInstanceState)
         setContent {
             BeerCompAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,

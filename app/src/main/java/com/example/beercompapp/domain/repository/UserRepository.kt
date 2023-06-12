@@ -1,15 +1,14 @@
 package com.example.beercompapp.domain.repository
 
-import com.example.beercompapp.data.entities.User
-import kotlinx.coroutines.flow.Flow
+import com.example.beercompapp.data.entities.UserEntity
 
 interface UserRepository {
 
-    suspend fun addUser(user: User)
+    suspend fun addUser(user: UserEntity)
 
-    suspend fun updateUser(user: User)
+    suspend fun updateUser(user: UserEntity)
 
-    suspend fun deleteUser(user: User)
+    suspend fun deleteUser(user: UserEntity)
 
-    fun getUserById(id: String): Flow<User>
+    suspend fun getUserByNumber(number: String): UserEntity?
 }

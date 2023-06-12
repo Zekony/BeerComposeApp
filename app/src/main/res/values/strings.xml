@@ -7,20 +7,43 @@
     <string name="elsee">Ещё</string>
     <string name="go_to_authorization_screen">go to authorization screen</string>
 
+    <string name="further">Далее</string>
     <string name="try_again">Try again</string>
     <string name="categories">Категории</string>
 
     <string name="beverages">Напитки</string>
     <string name="add_to_cart">В корзину</string>
+    <string name="cart_is_empty">Корзина пуста!</string>
+
+    <string name="loading_error">Не удалось загрузить списки продуктов</string>
 
     <string name="registration">Пожалуйста введите номер телефона, логин и пароль, чтобы создать аккаунт</string>
-    <string name="authorization">Пожалуйста введите логин и пароль, чтобы авторизироваться</string>
+    <string name="authorization">Пожалуйста введите номер телефона и пароль, чтобы авторизироваться</string>
     <string name="enter_password">Введите пароль</string>
     <string name="enter_password_again">Повторите пароль</string>
     <string name="enter_login">Введите логин</string>
     <string name="enter_number">Введите номер телефона</string>
 
+    <string name="create_account">Создать аккаунт</string>
     <string name="no_account">Нет аккаунта?</string>
     <string name="to_registration_screen">Создайте бесплатный аккаунт</string>
     <string name="to_auth_screen">Уже есть аккаунт?</string>
+    <string name="enter">Войти</string>
+
+    <string name="user_doesnt_exist_exception">Такого пользователя не существует</string>
+    <string name="user_already_exists_exception">Пользователь с таким номером уже существует</string>
+    <string name="wrong_password_exception">Неверный пароль</string>
+    <string name="passwords_should_match_exception">Пароли не совпадают</string>
+    <string name="new_login_is_old_login_exception">Новый логин совпадает со старым</string>
+    <string name="password_is_too_short_exception">Пароль слишком короткий</string>
+    <string name="login_is_too_short_exception">Логин слишком короткий</string>
+    <string name="number_is_too_short_exception">Номер слишком короткий</string>
+
+    <string name="password_is_changed">Пароль успешно изменён</string>
+    <string name="login_is_changed">Логин успешно изменён</string>
+
+    <string name="thanks_for_order">Спасибо за заказ!</string>
+    <string name="confirm_order">Подтверждаете заказ?</string>
+
+    <string name="save_changes">Сохранить изменения</string>
 </resources>

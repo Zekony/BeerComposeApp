@@ -2,5 +2,6 @@
 <resources>
     <style name="Theme.BeerCompApp" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/HunterGreen</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.beercompapp.presentation.utils
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,10 +26,10 @@ import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.data.entities.productToCartItem
 
 @Composable
-fun ToShoppingCartButton(
+fun ShoppingCartButton(
     productItem: ProductItem? = null,
     cartItem: CartItem?,
-    cartHelper: CartButtonHelper ,
+    cartHelper: CartButtonHelper,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -45,7 +45,7 @@ fun ToShoppingCartButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
-                .background(Color.Green),
+                .background(MaterialTheme.colors.secondaryVariant),
 
             ) {
             if (cartItem == null || cartItem.amount == 0) {
@@ -62,7 +62,11 @@ fun ToShoppingCartButton(
                         id = R.string.shopping
                     ),
                     modifier = Modifier.clickable {
-                        if (cartItem.amount.dec() == 0) {
+                        if (cartItem.amount == 1) {
+                            Log.d(
+                                "ShoppingCartButton",
+                                "cartItem.amount ${cartItem.name} ${cartItem.amount}"
+                            )
                             cartHelper.deleteCartItem(cartItem)
                         } else {
                             cartHelper.updateCartItem(cartItem.copy(amount = cartItem.amount.dec()))

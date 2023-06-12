@@ -1,14 +1,15 @@
 package com.example.beercompapp.presentation.utils
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Badge
+import androidx.compose.material.BadgedBox
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.beercompapp.presentation.ui.theme.Gold
 
 
 @Composable
@@ -23,18 +24,33 @@ fun BeerAppBottomNavigationBar(
         modifier = modifier.fillMaxWidth()
     ) {
         for (navItem in navigationList) {
-            val selected = currentPage == navItem.pageName
             NavigationBarItem(
                 selected = currentPage == navItem.pageName,
                 onClick = { onTabPressed(navItem.pageName) },
                 icon = {
-                    Icon(
-                        imageVector = navItem.icon,
-                        contentDescription = navItem.text,
-                    )
+                    Column {
+                        if (navItem.amount > 0) {
+                            BadgedBox(badge = {
+                                Badge(backgroundColor = Gold) {
+                                    Text(text = navItem.amount.toString())
+                                }
+                            }
+                            ) {
+                                Icon(
+                                    imageVector = navItem.icon,
+                                    contentDescription = navItem.text,
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = navItem.icon,
+                                contentDescription = navItem.text,
+                            )
+                        }
+                    }
                 },
                 colors = NavigationBarItemDefaults.colors
-                    (indicatorColor = MaterialTheme.colors.onSurface)
+                    (indicatorColor = MaterialTheme.colors.secondary)
             )
         }
     }
@@ -43,9 +59,10 @@ fun BeerAppBottomNavigationBar(
 data class NavigationItemContent(
     val pageName: BeerPage,
     val icon: ImageVector,
-    val text: String
+    val text: String,
+    val amount: Int
 )
 
 enum class BeerPage {
-    MainScreen, Menu, Shopping, Else
+    MainScreen, Menu, Shopping, Profile
 }

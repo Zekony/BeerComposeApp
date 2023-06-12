@@ -15,6 +15,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,10 +28,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.beercompapp.R
@@ -38,22 +41,20 @@ import com.example.beercompapp.common.Constants.BASE_URL
 import com.example.beercompapp.data.LocalDataProvider
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.presentation.BeerAppUiState
-import com.example.beercompapp.presentation.DownloadState
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 import com.example.beercompapp.presentation.utils.CartButtonHelper
 import com.example.beercompapp.presentation.utils.LoadingAnimation3
-import com.example.beercompapp.presentation.utils.ToShoppingCartButton
+import com.example.beercompapp.presentation.utils.ShoppingCartButton
 
 @Composable
 fun BeerAppMenuScreen(
-    uiState: BeerAppUiState,
-    onProductItemClick: (ProductItem) -> Unit,
-    onErrorButtonClick: () -> Unit,
-    cartHelper: CartButtonHelper,
-    onFabClick: (ProductItem) -> Unit,
+    viewModel: MenuScreenViewModel = hiltViewModel(),
+    toItemDetailScreen: (ProductItem) -> Unit,
+    currentCategory: MenuCategory,
     modifier: Modifier = Modifier
 ) {
+    val uiState = viewModel.state.collectAsState().value
+
     when (uiState.downloadState) {
         DownloadState.Loading -> {
             Column(
@@ -69,7 +70,7 @@ fun BeerAppMenuScreen(
         DownloadState.Success -> {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .background(MaterialTheme.colors.background)
             ) {
                 LazyVerticalGrid(
@@ -82,20 +83,20 @@ fun BeerAppMenuScreen(
                     )
                 ) {
                     items(
-                        items = when (uiState.menuCategory) {
-                            MenuCategory.Beer -> uiState.listOfBeer
-                            MenuCategory.Snacks -> uiState.listOfSnacks
-                        }, key = { item -> item.UID }) { item ->
+                        items = uiState.listOfProducts.filter { it.category == currentCategory },
+                        key = { item -> item.UID }) { item ->
                         BeerAppMenuItem(
                             item = item,
-                            onProductItemClick = onProductItemClick,
+                            onProductItemClick = toItemDetailScreen,
                             cartItem = if (uiState.shoppingCart.isEmpty()) {
                                 CartItem()
                             } else {
                                 uiState.shoppingCart.firstOrNull { it.UID == item.UID }
                             },
-                            cartHelper = cartHelper,
-                            onFabClick = { onFabClick(item) }
+                            isItemLiked = uiState.userLikes.contains(item),
+                            cartHelper = viewModel.shoppingCartButtonHelper,
+                            isUserActive = uiState.user.login != "",
+                            onFabClick = { viewModel.likeOrDislike(item) }
                         )
                     }
                 }
@@ -110,10 +111,11 @@ fun BeerAppMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(id = androidx.compose.ui.R.string.default_error_message),
-                    style = MaterialTheme.typography.h1
+                    text = stringResource(id = R.string.loading_error),
+                    style = MaterialTheme.typography.h1,
+                    textAlign = TextAlign.Center
                 )
-                Button(onClick = { run(onErrorButtonClick) }) {
+                Button(onClick = viewModel::getProductsFromDb) {
                     Text(
                         text = stringResource(id = R.string.try_again),
                         color = Color.White,
@@ -130,6 +132,8 @@ fun BeerAppMenuItem(
     onProductItemClick: (ProductItem) -> Unit,
     cartHelper: CartButtonHelper,
     onFabClick: () -> Unit,
+    isItemLiked: Boolean,
+    isUserActive: Boolean,
     item: ProductItem,
     cartItem: CartItem?,
     modifier: Modifier = Modifier
@@ -144,7 +148,7 @@ fun BeerAppMenuItem(
         elevation = 12.dp,
     ) {
         Column(modifier = Modifier.fillMaxHeight()) {
-            Box() {
+            Box {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
                         .data(BASE_URL + item.imagePath)
@@ -159,14 +163,14 @@ fun BeerAppMenuItem(
                 FloatingActionButton(
                     onClick = onFabClick,
                     shape = CircleShape,
-                    containerColor = MaterialTheme.colors.background,
-                    contentColor = MaterialTheme.colors.primary,
+                    containerColor = if (isUserActive) MaterialTheme.colors.background else Color.LightGray,
+                    contentColor = if (isUserActive) MaterialTheme.colors.primary else Color.Gray,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .size(30.dp)
                         .offset(x = -(15).dp, y = 15.dp)
                 ) {
-                    if (item.isFavorite) {
+                    if (isItemLiked) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic__filled_heart),
                             contentDescription = "Like"
@@ -200,7 +204,7 @@ fun BeerAppMenuItem(
                         fontWeight = FontWeight.Bold
                     ),
                 )
-                ToShoppingCartButton(
+                ShoppingCartButton(
                     productItem = item,
                     cartItem = cartItem,
                     cartHelper = cartHelper
@@ -223,6 +227,8 @@ fun BeerAppMenuItemPreview() {
             override fun updateCartItem(cartItem: CartItem) {}
             override fun deleteCartItem(cartItem: CartItem) {}
         },
-        onFabClick = {}
+        onFabClick = {},
+        isItemLiked = true,
+        isUserActive = false
     )
 }

@@ -32,17 +32,22 @@ val montserrat = FontFamily(
 
 val Typography = Typography(
     h1 = TextStyle(
-        fontFamily = gothicA1,
+        fontFamily = montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
     ),
     h2 = TextStyle(
+        fontFamily = montserrat,
+        fontWeight = FontWeight.Bold,
+        fontSize = 15.sp
+    ),
+    h3 = TextStyle(
         fontFamily = gothicA1,
         fontWeight = FontWeight.Bold,
         fontSize = 15.sp
     ),
     body1 = TextStyle(
-        fontFamily = gothicA1,
+        fontFamily = montserrat,
         fontWeight = FontWeight.Normal,
         fontSize = 17.sp
     ),

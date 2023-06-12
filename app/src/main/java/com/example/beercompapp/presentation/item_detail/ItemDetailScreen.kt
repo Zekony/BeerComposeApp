@@ -13,8 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,27 +37,29 @@ import com.example.beercompapp.common.Constants
 import com.example.beercompapp.data.LocalDataProvider
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.presentation.BeerAppUiState
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 import com.example.beercompapp.presentation.ui.theme.BeerCompAppTheme
 import com.example.beercompapp.presentation.utils.BeerAppTopBar
 import com.example.beercompapp.presentation.utils.CartButtonHelper
-import com.example.beercompapp.presentation.utils.ToShoppingCartButton
+import com.example.beercompapp.presentation.utils.LoadingAnimation3
+import com.example.beercompapp.presentation.utils.ShoppingCartButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ItemDetailScreen(
     id: String,
-    uiState: BeerAppUiState,
     viewModel: ItemDetailViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
 ) {
-    viewModel.getProductById(id)
-    val product by viewModel.productItem.collectAsState()
-    val productList = listOf(product)
+    LaunchedEffect(Unit) {
+        viewModel.getProductById(id)
+    }
+    val uiState = viewModel.uiState.collectAsState().value
 
-    if (product != null) {
+    if (uiState.downloadState == DownloadState.Success) {
+        val product = uiState.product.first()!!
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,21 +75,8 @@ fun ItemDetailScreen(
                 bottomBar = {
                     ItemDetailBottomBar(
                         uiState = uiState,
-                        item = product!!,
-                        cartHelper = object : CartButtonHelper {
-                            override fun addToCart(cartItem: CartItem) {
-                                viewModel.addToCart(cartItem)
-                            }
-
-                            override fun updateCartItem(cartItem: CartItem) {
-                                viewModel.updateCartItem(cartItem)
-                            }
-
-                            override fun deleteCartItem(cartItem: CartItem) {
-                                viewModel.deleteCartItem(cartItem)
-                            }
-
-                        }
+                        item = product,
+                        cartHelper = viewModel.shoppingCartButtonHelper
                     )
                 }
             ) {
@@ -98,17 +87,27 @@ fun ItemDetailScreen(
                         .background(MaterialTheme.colors.background)
                 ) {
                     items(
-                        items = productList
+                        items = listOf(product)
                     ) { item ->
-                        if (item != null) {
-                            ItemDetailContent(
-                                item = item,
-                                onFabClick = { viewModel.updateProductItem(item) },
-                            )
-                        }
+                        ItemDetailContent(
+                            item = item,
+                            isItemLiked = uiState.userLikes.contains(item),
+                            isUserActive = uiState.user.login != "",
+                            onFabClick = { viewModel.addLike(item) },
+                        )
                     }
                 }
             }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LoadingAnimation3()
         }
     }
 }
@@ -118,6 +117,8 @@ fun ItemDetailScreen(
 fun ItemDetailContent(
     item: ProductItem,
     onFabClick: () -> Unit,
+    isItemLiked: Boolean,
+    isUserActive: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -132,7 +133,7 @@ fun ItemDetailContent(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box() {
+        Box {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(Constants.BASE_URL + item.imagePath)
@@ -150,13 +151,13 @@ fun ItemDetailContent(
             FloatingActionButton(
                 onClick = onFabClick,
                 shape = CircleShape,
-                containerColor = Color.Yellow,
-                contentColor = MaterialTheme.colors.primary,
+                containerColor = if (isUserActive) MaterialTheme.colors.primary else Color.LightGray,
+                contentColor = if (isUserActive) MaterialTheme.colors.secondaryVariant else Color.Gray,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .offset((-16).dp, 25.dp)
             ) {
-                if (item.isFavorite) {
+                if (isItemLiked) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic__filled_heart),
                         contentDescription = "Like"
@@ -170,72 +171,34 @@ fun ItemDetailContent(
             }
         }
         Column(horizontalAlignment = Alignment.Start) {
-
             Text(
                 text = item.name,
                 maxLines = 2,
                 style = MaterialTheme.typography.h1,
+                color = MaterialTheme.colors.onBackground,
                 modifier = modifier.padding(8.dp, top = 10.dp)
             )
             Text(
                 text = item.description,
                 maxLines = 6,
+                color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.body1,
                 modifier = modifier.padding(8.dp)
             )
-
-/*            Row(
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "${item.price} ₽",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    textAlign = TextAlign.Start
-
-                )
-                when (item.category) {
-                    MenuCategory.Beer ->
-                        Text(
-                            text = "${item.alcPercentage}%",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            textAlign = TextAlign.End
-                        )
-                    MenuCategory.Snacks ->
-                        Text(
-                            text = if (item.weight != null) {
-                                "${item.weight} гр."
-                            } else "",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            textAlign = TextAlign.End
-                        )
-                }
-            }*/
         }
     }
 }
 
 @Composable
 fun ItemDetailBottomBar(
-    uiState: BeerAppUiState,
+    uiState: ItemDetailUiState,
     item: ProductItem,
     cartHelper: CartButtonHelper,
 ) {
     BottomAppBar(
         elevation = 4.dp,
-        contentPadding = PaddingValues(vertical = 10.dp)
+        contentPadding = PaddingValues(vertical = 10.dp),
+        modifier = Modifier.background(MaterialTheme.colors.secondaryVariant)
     ) {
 
         Row(
@@ -275,12 +238,12 @@ fun ItemDetailBottomBar(
                         textAlign = TextAlign.End
                     )
             }
-            ToShoppingCartButton(
+            ShoppingCartButton(
                 productItem = item,
                 cartItem = if (uiState.shoppingCart.isEmpty()) {
                     CartItem()
                 } else {
-                    uiState.shoppingCart.firstOrNull() { it.UID == item.UID }
+                    uiState.shoppingCart.firstOrNull { it.UID == item.UID }
                 },
                 cartHelper = cartHelper,
             )
@@ -295,8 +258,13 @@ private fun ItemDetailContentPreview() {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background,
     ) {
-        BeerCompAppTheme() {
-            ItemDetailContent(item = LocalDataProvider.getProductsTestList()[1], onFabClick = {})
+        BeerCompAppTheme {
+            ItemDetailContent(
+                item = LocalDataProvider.getProductsTestList()[1],
+                onFabClick = {},
+                isItemLiked = true,
+                isUserActive = true
+            )
         }
     }
 }

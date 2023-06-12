@@ -2,8 +2,9 @@ package com.example.beercompapp.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.beercompapp.common.Constants.CART_ITEM_TABLE_NAME
 
-@Entity(tableName = "CartTable")
+@Entity(tableName = CART_ITEM_TABLE_NAME)
 data class CartItem(
     @PrimaryKey
     val UID: String = "",

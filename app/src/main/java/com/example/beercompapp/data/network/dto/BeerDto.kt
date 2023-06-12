@@ -1,7 +1,7 @@
 package com.example.beercompapp.data.network.dto
 
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.presentation.MenuCategory
+import com.example.beercompapp.presentation.core.MenuCategory
 
 data class BeerDto(
     val UID: String = "",
