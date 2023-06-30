@@ -5,7 +5,7 @@ import com.example.beercompapp.data.network.dto.BeerDtoList
 import com.example.beercompapp.data.network.dto.SnackDtoList
 import kotlinx.coroutines.flow.Flow
 
-interface ProductAppRepository {
+interface ProductRepository {
 
     suspend fun getBeersApi(): BeerDtoList?
 

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.beercompapp.common.Resource
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.domain.repository.ProductAppRepository
 import com.example.beercompapp.domain.use_cases.cart_item_usecases.CartUseCases
 import com.example.beercompapp.domain.use_cases.likes_usecases.LikesUseCases
 import com.example.beercompapp.domain.use_cases.products_usecases.ProductUseCases
@@ -22,11 +21,10 @@ class MenuScreenViewModel @Inject constructor(
     private val productUseCases: ProductUseCases,
     private val userUseCases: UserUseCases,
     private val likesUseCases: LikesUseCases,
-    private val cartUseCases: CartUseCases,
-    private val repository: ProductAppRepository
+    private val cartUseCases: CartUseCases
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(BeerAppUiState())
+    private val _state = MutableStateFlow(MenuScreenUiState())
     val state = _state.asStateFlow()
 
     init {
@@ -53,7 +51,6 @@ class MenuScreenViewModel @Inject constructor(
         Log.d("MSViewModel", "getProductsFromDb is called")
         if (_state.value.listOfProducts.isEmpty()) {
             viewModelScope.launch {
-                // проверяем есть ли чтото в датабазе - нужно ли делать запрос на сервер, так как до onCompletion код не доходит
                 val prod = productUseCases.getProductsFromDbUseCase().first()
                 if (prod.isEmpty()) {
                     getSnacksFromApi()
@@ -75,46 +72,45 @@ class MenuScreenViewModel @Inject constructor(
 
     private fun getBeerFromApi() {
         Log.d("MSViewModel", "getBeerFromApi is called")
-        if (_state.value.listOfProducts.isEmpty()) {
-            productUseCases.getBeersFromNetworkUseCase().onEach { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        if (result.data == null || result.data.isEmpty()) {
-                            Log.d(
-                                "MSViewModel",
-                                "Beer Request returned empty or null ${result.data}"
-                            )
-                        } else {
-                            _state.update {
-                                it.copy(
-                                    downloadState = DownloadState.Success,
-                                    listOfProducts = _state.value.listOfProducts.plus(result.data)
-                                )
-                            }
-                            _state.value.listOfProducts.forEach { repository.addProduct(it) }
-                            Log.d(
-                                "MSViewModel",
-                                "UiState listOfBeer is ${_state.value.listOfProducts.size}"
-                            )
-                        }
-                    }
-                    is Resource.Error -> {
-                        Log.d("MSViewModel", "Beer Request returned error ${result.message}")
+        productUseCases.getBeersFromNetworkUseCase().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    if (result.data == null) {
                         _state.update {
                             it.copy(
                                 downloadState = DownloadState.Error
                             )
                         }
-                    }
-                    is Resource.Loading -> {
+                    } else {
                         _state.update {
-                            it.copy(downloadState = DownloadState.Loading)
+                            it.copy(
+                                downloadState = DownloadState.Success,
+                                listOfProducts = _state.value.listOfProducts.plus(result.data as List<ProductItem>)
+                            )
                         }
-                        Log.d("MSViewModel", "Beer Request is loading ${result.data}")
+                        _state.value.listOfProducts.forEach {
+                            productUseCases.addProductToDBUseCase(
+                                it
+                            )
+                        }
                     }
                 }
-            }.launchIn(viewModelScope)
-        }
+                is Resource.Error -> {
+                    Log.d("MSViewModel", "Beer Request returned error ${result.message}")
+                    _state.update {
+                        it.copy(
+                            downloadState = DownloadState.Error
+                        )
+                    }
+                }
+                is Resource.Loading -> {
+                    _state.update {
+                        it.copy(downloadState = DownloadState.Loading)
+                    }
+                }
+            }
+        }.launchIn(viewModelScope)
+
     }
 
     private fun getSnacksFromApi() {
@@ -122,23 +118,24 @@ class MenuScreenViewModel @Inject constructor(
         productUseCases.getSnacksFromNetworkUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    if (result.data == null || result.data.isEmpty()) {
-                        Log.d(
-                            "MSViewModel",
-                            "Snack Request returned empty or null ${result.data}"
-                        )
+                    if (result.data == null) {
+                        _state.update {
+                            it.copy(
+                                downloadState = DownloadState.Error
+                            )
+                        }
                     } else {
                         _state.update {
                             it.copy(
                                 downloadState = DownloadState.Success,
-                                listOfProducts = _state.value.listOfProducts.plus(result.data)
+                                listOfProducts = _state.value.listOfProducts.plus(result.data as List<ProductItem>)
                             )
                         }
-                        _state.value.listOfProducts.forEach { repository.addProduct(it) }
-                        Log.d(
-                            "MSViewModel",
-                            "UiState listOfSnacks is ${_state.value.listOfProducts.size}"
-                        )
+                        _state.value.listOfProducts.forEach {
+                            productUseCases.addProductToDBUseCase(
+                                it
+                            )
+                        }
                     }
                 }
                 is Resource.Error -> {
@@ -186,7 +183,6 @@ class MenuScreenViewModel @Inject constructor(
     private fun checkForActiveUser() {
         viewModelScope.launch {
             _state.update { state.value.copy(user = userUseCases.getActiveUserUseCase()) }
-            Log.d("MSViewModel", "active user name is ${_state.value.user.login} and password is ${_state.value.user.password}")
             getLikesList()
         }
     }
@@ -194,39 +190,29 @@ class MenuScreenViewModel @Inject constructor(
     //functions for cart button
     fun addToCartFunc(item: CartItem) {
         viewModelScope.launch {
-            Log.d("MSViewModel", "addToCartFunc is called")
             cartUseCases.addToCartUseCase(item)
         }
     }
 
     fun deleteCartItemFunc(item: CartItem) {
         viewModelScope.launch {
-            Log.d("MSViewModel", "deleteCartItemFunc is called")
             cartUseCases.deleteCartItemUseCase(item)
         }
     }
 
     fun updateCartItemFunc(item: CartItem) {
         viewModelScope.launch {
-            Log.d("MSViewModel", "updateCartItemFunc is called")
             cartUseCases.updateCartItemUseCase(item)
         }
     }
 
-    fun getCartItems() {
+    private fun getCartItems() {
         viewModelScope.launch {
-            Log.d("MSViewModel", "getCartItems is called")
             cartUseCases.getCartItemsFromDbUseCase()
                 .collect { list ->
                     _state.update {
-                        it.copy(
-                            shoppingCart = list
-                        )
+                        it.copy(shoppingCart = list)
                     }
-                    Log.d(
-                        "MSViewModel",
-                        "getCartItems list size is ${list.size} state list is ${state.value.shoppingCart.size}"
-                    )
                 }
         }
     }

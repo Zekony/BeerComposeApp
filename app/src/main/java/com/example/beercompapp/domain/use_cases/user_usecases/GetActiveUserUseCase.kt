@@ -7,6 +7,6 @@ class GetActiveUserUseCase(
     private val appSettings: AppSettings
 ) {
     suspend operator fun invoke(): User {
-        return appSettings.getCurrentUser()
+        return appSettings.getCurrentUser() ?: User()
     }
 }

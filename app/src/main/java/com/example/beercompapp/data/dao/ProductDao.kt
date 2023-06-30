@@ -19,24 +19,4 @@ interface ProductDao {
 
     @Query("SELECT * FROM ProductTable WHERE UID = :id")
     fun getProductById(id: String): Flow<ProductItem>
-
-    //Cart functions
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addToCart(item: CartItem)
-
-    @Upsert
-    suspend fun updateCartItem(item: CartItem)
-
-    @Delete
-    suspend fun deleteCartItem(item: CartItem)
-
-    @Query("DELETE FROM CartTable WHERE UID = :UID")
-    suspend fun deleteCartItemByUID(UID: String)
-
-    @Query("SELECT * FROM CartTable")
-    fun getCartItems(): Flow<List<CartItem>>
-
-    @Query("SELECT * FROM CartTable WHERE UID = :id")
-    fun getCartItemById(id: String): Flow<CartItem>
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.beercompapp.common.Resource
 import com.example.beercompapp.data.network.dto.toProductItem
 import com.example.beercompapp.data.entities.ProductItem
-import com.example.beercompapp.domain.repository.ProductAppRepository
+import com.example.beercompapp.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -12,7 +12,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class GetSnacksFromNetworkUseCase @Inject constructor(
-    private val repository: ProductAppRepository
+    private val repository: ProductRepository
 ) {
     operator fun invoke(): Flow<Resource<List<ProductItem>>> = flow {
         try {
@@ -21,7 +21,7 @@ class GetSnacksFromNetworkUseCase @Inject constructor(
             if (product == emptyList<ProductItem>()) {
                 Log.d("GetSnacksUseCase", "List of snacks returned empty")
             }
-            if (product == null) {
+            if (product == null || product.isEmpty()) {
                 emit(Resource.Error("An unexpected error occurred"))
             }
             emit(Resource.Success(product))

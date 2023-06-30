@@ -17,7 +17,6 @@ data class UserEntity(
             phoneNumber = phoneNumber,
             login = login,
             password = password,
-            role = User.Role.Customer
         )
     }
 }

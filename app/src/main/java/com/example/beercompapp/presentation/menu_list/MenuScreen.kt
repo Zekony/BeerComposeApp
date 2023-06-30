@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.beercompapp.R
 import com.example.beercompapp.common.Constants.BASE_URL
@@ -48,10 +49,10 @@ import com.example.beercompapp.presentation.utils.ShoppingCartButton
 
 @Composable
 fun BeerAppMenuScreen(
+    modifier: Modifier = Modifier,
     viewModel: MenuScreenViewModel = hiltViewModel(),
     toItemDetailScreen: (ProductItem) -> Unit,
     currentCategory: MenuCategory,
-    modifier: Modifier = Modifier
 ) {
     val uiState = viewModel.state.collectAsState().value
 
@@ -88,11 +89,8 @@ fun BeerAppMenuScreen(
                         BeerAppMenuItem(
                             item = item,
                             onProductItemClick = toItemDetailScreen,
-                            cartItem = if (uiState.shoppingCart.isEmpty()) {
-                                CartItem()
-                            } else {
-                                uiState.shoppingCart.firstOrNull { it.UID == item.UID }
-                            },
+                            cartItem =
+                            uiState.shoppingCart.firstOrNull { it.UID == item.UID } ?: CartItem(),
                             isItemLiked = uiState.userLikes.contains(item),
                             cartHelper = viewModel.shoppingCartButtonHelper,
                             isUserActive = uiState.user.login != "",
@@ -150,8 +148,10 @@ fun BeerAppMenuItem(
         Column(modifier = Modifier.fillMaxHeight()) {
             Box {
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
+                    model = ImageRequest.Builder(LocalContext.current)
                         .data(BASE_URL + item.imagePath)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
                         .crossfade(true)
                         .build(),
                     error = painterResource(id = R.drawable.error_image),

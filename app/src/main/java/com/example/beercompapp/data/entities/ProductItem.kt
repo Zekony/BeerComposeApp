@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.beercompapp.common.Constants.PRODUCT_TABLE_NAME
 import com.example.beercompapp.common.converters.MenuCategoryConverter
-import com.example.beercompapp.common.converters.StringListConverter
 import com.example.beercompapp.presentation.core.MenuCategory
 
 @Entity(tableName = PRODUCT_TABLE_NAME)
@@ -21,8 +20,5 @@ data class ProductItem(
     @TypeConverters(MenuCategoryConverter::class)
     val category: MenuCategory,
     val volume: Double? = 0.0,
-    val salePercentage: Int? = 0,
     val weight: Int? = 0,
-    @TypeConverters(StringListConverter::class)
-    val tags: List<String>? = emptyList()
 )

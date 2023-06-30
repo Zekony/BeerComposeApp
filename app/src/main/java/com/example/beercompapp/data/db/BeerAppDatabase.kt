@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.beercompapp.common.converters.MenuCategoryConverter
-import com.example.beercompapp.common.converters.StringListConverter
 import com.example.beercompapp.data.dao.CartItemDao
 import com.example.beercompapp.data.dao.LikesDao
 import com.example.beercompapp.data.dao.ProductDao
@@ -23,7 +22,7 @@ import com.example.beercompapp.data.entities.relations.UserProductItemLikes
     ],
     version = 1
 )
-@TypeConverters(StringListConverter::class, MenuCategoryConverter::class)
+@TypeConverters(MenuCategoryConverter::class)
 abstract class BeerAppDatabase : RoomDatabase() {
 
     abstract fun productDao(): ProductDao

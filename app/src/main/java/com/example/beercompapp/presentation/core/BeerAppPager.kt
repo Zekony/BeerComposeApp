@@ -170,12 +170,10 @@ fun BeerAppPager(
                             onCategoryClick = {
                                 when (it) {
                                     MenuCategory.Beer -> viewModel.updateCurrentPage(
-                                        BeerPage.Menu,
-                                        it
+                                        BeerPage.Menu, it
                                     )
                                     MenuCategory.Snacks -> viewModel.updateCurrentPage(
-                                        BeerPage.Menu,
-                                        it
+                                        BeerPage.Menu, it
                                     )
                                 }
                             }

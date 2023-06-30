@@ -31,6 +31,5 @@ fun BeerDto.toProductItem(): ProductItem {
         type = type,
         category = MenuCategory.Beer,
         volume = volume,
-        salePercentage = salePercentage,
     )
 }

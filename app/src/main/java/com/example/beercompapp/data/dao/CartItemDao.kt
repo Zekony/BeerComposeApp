@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CartItemDao {
 
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addToCart(item: CartItem)
 
@@ -16,9 +15,6 @@ interface CartItemDao {
 
     @Delete
     suspend fun deleteCartItem(item: CartItem)
-
-    @Query("DELETE FROM CartTable WHERE UID = :UID")
-    suspend fun deleteCartItemByUID(UID: String)
 
     @Query("SELECT * FROM CartTable")
     fun getCartItems(): Flow<List<CartItem>>

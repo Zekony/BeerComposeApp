@@ -18,7 +18,7 @@ import com.example.beercompapp.data.repository.UserRepositoryImpl
 import com.example.beercompapp.data.settings.AppSettings
 import com.example.beercompapp.domain.repository.CartItemRepository
 import com.example.beercompapp.domain.repository.LikesRepository
-import com.example.beercompapp.domain.repository.ProductAppRepository
+import com.example.beercompapp.domain.repository.ProductRepository
 import com.example.beercompapp.domain.repository.UserRepository
 import com.example.beercompapp.domain.use_cases.cart_item_usecases.*
 import com.example.beercompapp.domain.use_cases.likes_usecases.*
@@ -56,7 +56,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBeerRepository(api: ApiClient, dao: ProductDao): ProductAppRepository {
+    fun provideBeerRepository(api: ApiClient, dao: ProductDao): ProductRepository {
         return ProductRepositoryImpl(api, dao)
     }
 
@@ -80,13 +80,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUseCases(repository: ProductAppRepository): ProductUseCases {
+    fun provideUseCases(repository: ProductRepository): ProductUseCases {
         return ProductUseCases(
             getBeersFromNetworkUseCase = GetBeersFromNetworkUseCase(repository),
             getSnacksFromNetworkUseCase = GetSnacksFromNetworkUseCase(repository),
             getProductByIdFromDbUseCase = GetProductByIdFromDbUseCase(repository),
             getProductsFromDbUseCase = GetProductsFromDbUseCase(repository),
             updateProductInDbUseCase = UpdateProductInDbUseCase(repository),
+            addProductToDBUseCase = AddProductToDBUseCase(repository),
         )
     }
 

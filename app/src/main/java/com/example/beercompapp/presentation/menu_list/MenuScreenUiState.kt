@@ -4,7 +4,7 @@ import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.domain.model.User
 
-data class BeerAppUiState(
+data class MenuScreenUiState(
     val downloadState: DownloadState = DownloadState.Loading,
     val user: User = User(),
     val listOfProducts: List<ProductItem> = mutableListOf(),

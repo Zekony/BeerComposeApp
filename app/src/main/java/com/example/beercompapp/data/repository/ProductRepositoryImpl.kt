@@ -6,13 +6,13 @@ import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.data.network.ApiClient
 import com.example.beercompapp.data.network.dto.BeerDtoList
 import com.example.beercompapp.data.network.dto.SnackDtoList
-import com.example.beercompapp.domain.repository.ProductAppRepository
+import com.example.beercompapp.domain.repository.ProductRepository
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
     private val api: ApiClient,
     private val dao: ProductDao
-) : ProductAppRepository {
+) : ProductRepository {
 
     override suspend fun getBeersApi(): BeerDtoList? {
         val request = api.getAllBeer()

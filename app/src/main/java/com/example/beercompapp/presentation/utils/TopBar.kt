@@ -16,10 +16,10 @@ import com.example.beercompapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BeerAppTopBar(
+    modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
     title: String? = null,
-    icon: ImageVector?,
-    modifier: Modifier = Modifier
+    icon: ImageVector?
 ) {
     val topAppBarState = rememberTopAppBarState()
     TopAppBar(

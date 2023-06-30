@@ -23,8 +23,6 @@ private val DarkColorPalette = darkColors(
     secondaryVariant = KellyGreen,
     background = Color.Black,
     surface = HunterGreen,
-    onSurface = Color.White,
-    onBackground = Color.White
 
 
     /* Other default colors to override

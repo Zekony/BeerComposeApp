@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.domain.use_cases.cart_item_usecases.CartUseCases
-import com.example.beercompapp.presentation.menu_list.BeerAppUiState
+import com.example.beercompapp.presentation.menu_list.MenuScreenUiState
 import com.example.beercompapp.presentation.utils.CartButtonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,7 @@ class ShoppingCartViewModel @Inject constructor(
         getCartItems()
     }
 
-    private val _state = MutableStateFlow(BeerAppUiState())
+    private val _state = MutableStateFlow(MenuScreenUiState())
     val state = _state.asStateFlow()
 
     val shoppingCartButtonHelper = object : CartButtonHelper {

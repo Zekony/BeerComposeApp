@@ -1,6 +1,5 @@
 package com.example.beercompapp.data
 
-import com.example.beercompapp.R
 import com.example.beercompapp.data.entities.CartItem
 import com.example.beercompapp.data.entities.ProductItem
 import com.example.beercompapp.presentation.core.MenuCategory
@@ -19,9 +18,7 @@ object LocalDataProvider {
                 type = "",
                 category = MenuCategory.Beer,
                 volume = 7.0,
-                salePercentage = 30,
                 weight = 10,
-                tags = emptyList()
             ),
             ProductItem(
                 UID = "asdvqwed",
@@ -33,9 +30,7 @@ object LocalDataProvider {
                 type = "",
                 category = MenuCategory.Beer,
                 volume = 7.0,
-                salePercentage = 30,
                 weight = 10,
-                tags = emptyList()
             )
         )
     }

@@ -6,4 +6,5 @@ data class ProductUseCases(
     val getProductByIdFromDbUseCase: GetProductByIdFromDbUseCase,
     val getProductsFromDbUseCase: GetProductsFromDbUseCase,
     val updateProductInDbUseCase: UpdateProductInDbUseCase,
+    val addProductToDBUseCase: AddProductToDBUseCase,
 )

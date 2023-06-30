@@ -11,39 +11,33 @@ import com.example.beercompapp.common.Constants.USER_PREFERENCES_KEY
 import com.example.beercompapp.domain.model.User
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DataStoreAppSettings @Inject constructor(
     @ApplicationContext val appContext: Context
-): AppSettings {
+) : AppSettings {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
         DATA_STORE_NAME
     )
 
-    override fun addListener(): Flow<Preferences> {
-        return appContext.dataStore.data
-    }
+    private val userKey = stringPreferencesKey(USER_PREFERENCES_KEY)
 
-    override suspend fun getCurrentUser(): User {
-        val userKey = stringPreferencesKey(USER_PREFERENCES_KEY)
-        val preferences = appContext.dataStore.data.first()
-        preferences[userKey]?.let {
-            val gson = GsonBuilder().registerTypeAdapter(User.Role::class.java, UserRoleTypeAdapter())
-            return gson.create().fromJson(it, User::class.java)
+    override suspend fun getCurrentUser(): User? {
+        val json = appContext.dataStore.data.firstOrNull()
+        return if (json != null) {
+            GsonBuilder().create().fromJson(json[userKey], User::class.java)
+        } else {
+            User()
         }
-        return User(role = User.Role.NoUser)
     }
 
     override suspend fun setCurrentUser(user: User) {
-        val userKey = stringPreferencesKey(USER_PREFERENCES_KEY)
         appContext.dataStore.edit {
-            val gson = GsonBuilder().registerTypeAdapter(User.Role::class.java, UserRoleTypeAdapter())
-            it[userKey] = gson.create().toJson(user)
+            it[userKey] = GsonBuilder().create().toJson(user)
         }
     }
 }
