@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is my first project, an app for a bar.
+This is my first project, an application for a bar. Which can be used to browse content, select favorite items and create fake orders.
 
 ## Technologies used in this project
 
